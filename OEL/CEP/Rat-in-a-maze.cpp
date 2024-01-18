@@ -2,65 +2,85 @@
 
 using namespace std;
 
-class Solution {
-  void findPathHelper(int i, int j, vector < vector < int >> & a, int n, vector < string > & ans, string move,
-    vector < vector < int >> & vis) {
-    if (i == n - 1 && j == n - 1) {
-      ans.push_back(move);
-      return;
+// Function to find the paths in a matrix
+void findPathHelper(int row, int col, vector<vector<int>> &matrix, int rows, vector<string> &ans, string move,
+                    vector<vector<int>> &vis) {
+    // If we reach the bottom-right cell, add the current path to the answer
+    if (row == rows - 1 && col == rows - 1) {
+        ans.push_back(move);
+        return;
     }
 
-    // downward
-    if (i + 1 < n && !vis[i + 1][j] && a[i + 1][j] == 1) {
-      vis[i][j] = 1;
-      findPathHelper(i + 1, j, a, n, ans, move + 'D', vis);
-      vis[i][j] = 0;
+    // Check and explore the downward direction
+    if (row + 1 < rows && !vis[row + 1][col] && matrix[row + 1][col] == 1) {
+        vis[row][col] = 1;
+        findPathHelper(row + 1, col, matrix, rows, ans, move + 'D', vis);
+        vis[row][col] = 0;
     }
 
-    // // left
-    // if (j - 1 >= 0 && !vis[i][j - 1] && a[i][j - 1] == 1) {
-    //   vis[i][j] = 1;
-    //   findPathHelper(i, j - 1, a, n, ans, move + 'L', vis);
-    //   vis[i][j] = 0;
-    // }
-
-    // right 
-    if (j + 1 < n && !vis[i][j + 1] && a[i][j + 1] == 1) {
-      vis[i][j] = 1;
-      findPathHelper(i, j + 1, a, n, ans, move + 'R', vis);
-      vis[i][j] = 0;
+    // Check and explore the left direction
+    if (col - 1 >= 0 && !vis[row][col - 1] && matrix[row][col - 1] == 1) {
+        vis[row][col] = 1;
+        findPathHelper(row, col - 1, matrix, rows, ans, move + 'L', vis);
+        vis[row][col] = 0;
     }
 
-    // // upward
-    // if (i - 1 >= 0 && !vis[i - 1][j] && a[i - 1][j] == 1) {
-    //   vis[i][j] = 1;
-    //   findPathHelper(i - 1, j, a, n, ans, move + 'U', vis);
-    //   vis[i][j] = 0;
-    // }
-
-  }
-  public:
-    vector < string > findPath(vector < vector < int >> & m, int n) {
-      vector < string > ans;
-      vector < vector < int >> vis(n, vector < int > (n, 0));
-
-      if (m[0][0] == 1) findPathHelper(0, 0, m, n, ans, "", vis);
-      return ans;
+    // Check and explore the right direction
+    if (col + 1 < rows && !vis[row][col + 1] && matrix[row][col + 1] == 1) {
+        vis[row][col] = 1;
+        findPathHelper(row, col + 1, matrix, rows, ans, move + 'R', vis);
+        vis[row][col] = 0;
     }
-};
+
+    // Check and explore the upward direction
+    if (row - 1 >= 0 && !vis[row - 1][col] && matrix[row - 1][col] == 1) {
+        vis[row][col] = 1;
+        findPathHelper(row - 1, col, matrix, rows, ans, move + 'U', vis);
+        vis[row][col] = 0;
+    }
+}
+
+// Function to find paths in a matrix
+vector<string> findPath(vector<vector<int>> &matrix, int rows) {
+    vector<string> ans;
+    vector<vector<int>> vis(rows, vector<int>(rows, 0));
+
+    // If the starting cell is valid, start the path finding
+    if (matrix[0][0] == 1) {
+        findPathHelper(0, 0, matrix, rows, ans, "", vis);
+    }
+    return ans;
+}
+
+// Function to print a matrix
+void printMatrix(vector<vector<int>> &matrix) {
+    for (auto &row : matrix) {
+        for (int val : row) {
+            cout << val << " ";
+        }
+        cout << endl;
+    }
+}
 
 int main() {
-  int n = 4;
+    int rows = 4;
 
-   vector < vector < int >> m = {{1,0,0,0},{1,1,0,1},{1,1,0,0},{0,1,1,1}};
+    // Input matrix
+    vector<vector<int>> matrix = {{1, 0, 0, 0}, {1, 1, 0, 1}, {1, 1, 0, 0}, {0, 1, 1, 1}};
 
-  Solution obj;
-  vector < string > result = obj.findPath(m, n);
-  if (result.size() == 0)
-    cout << -1;
-  else
-    for (int i = 0; i < result.size(); i++) cout << result[i] << " ";
-  cout << endl;
+    // Print the input matrix
+    cout << "Input Matrix:\n";
+    printMatrix(matrix);
 
-  return 0;
+    // Find and display paths
+    vector<string> result = findPath(matrix, rows);
+    if (result.size() == 0)
+        cout << "No valid paths found.";
+    else {
+        cout << "Paths:\n";
+        for (int i = 0; i < result.size(); i++) cout << result[i] << " ";
+    }
+    cout << endl;
+
+    return 0;
 }
